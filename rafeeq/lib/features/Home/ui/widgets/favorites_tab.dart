@@ -5,8 +5,13 @@ class FavoritesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder(
-color:Colors.green
+    return const Scaffold(
+      body: Center(
+        child: Text(
+          "Favorites Screen",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+      ),
     );
   }
 }

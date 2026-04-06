@@ -37,6 +37,7 @@ class HomeScreen extends StatelessWidget {
           }
 
           return Scaffold(
+
             extendBody: true,
             extendBodyBehindAppBar: true,
             appBar: AppBar(
@@ -70,7 +71,24 @@ class HomeScreen extends StatelessWidget {
                 // بدل setState بننادي على الـ function اللي في الـ Cubit
                 context.read<NavigationCubit>().changePage(index);
               },
+
+
+
+
+
+
+
             ),
+
+
+
+
+
+
+
+
+
+
           );
         },
       ),

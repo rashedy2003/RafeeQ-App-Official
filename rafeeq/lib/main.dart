@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
-import 'MyApp.dart'; // استيراد الملف الجديد
+import 'core/networking/secure_storage_helper.dart';
+import 'MyApp.dart';
 
-void main() {
-  // هنا هتحط الـ Initializations مستقبلاً (مثل Firebase أو الـ Cubit Global)
-  runApp(const MyApp());
+void main() async {
+  // ضروري جداً لتشغيل الـ Storage قبل الـ App
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // فحص وجود التوكن
+  String? token = await SecureStorageHelper.getToken();
+  bool isLoggedIn = (token != null && token.isNotEmpty);
+
+  runApp(MyApp(isLoggedIn: isLoggedIn));
 }
