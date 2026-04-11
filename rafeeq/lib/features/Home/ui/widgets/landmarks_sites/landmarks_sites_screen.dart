@@ -1,3 +1,4 @@
+import 'package:Rafeeq/features/Home/ui/widgets/LandmarkDetails/landmark_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dio/dio.dart';
@@ -56,8 +57,9 @@ class LandmarksSitesScreen extends StatelessWidget {
               }
               return ListView.builder(
                 padding: const EdgeInsets.all(16),
+                physics: const BouncingScrollPhysics(), // سكرول ناعم
                 itemCount: state.sites.length,
-                itemBuilder: (context, index) => _buildSiteCard(state.sites[index]),
+                itemBuilder: (context, index) => _buildSiteCard(context, state.sites[index]),
               );
             }
             return const SizedBox();
@@ -67,7 +69,7 @@ class LandmarksSitesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSiteCard(LandmarksSitesModel site) {
+  Widget _buildSiteCard(BuildContext context, LandmarksSitesModel site) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -76,12 +78,34 @@ class LandmarksSitesScreen extends StatelessWidget {
         border: Border.all(color: Colors.white.withOpacity(0.1)),
       ),
       child: ListTile(
+        onTap: () {
+          // الانتقال لشاشة التفاصيل عند الضغط على الكارد
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LandmarkDetailsScreen(siteId: site.id),
+            ),
+          );
+        },
         contentPadding: const EdgeInsets.all(12),
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: Image.network(
             site.primaryImageUrl,
-            width: 80, height: 80, fit: BoxFit.cover,
+            width: 80,
+            height: 80,
+            fit: BoxFit.cover,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Container(
+                width: 80,
+                height: 80,
+                color: Colors.white10,
+                child: const Center(
+                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.amber),
+                ),
+              );
+            },
             errorBuilder: (context, error, stackTrace) =>
             const Icon(Icons.image_not_supported, color: Colors.white24, size: 40),
           ),
@@ -97,6 +121,7 @@ class LandmarksSitesScreen extends StatelessWidget {
             style: const TextStyle(color: Colors.amber, fontSize: 13),
           ),
         ),
+        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 16),
       ),
     );
   }
