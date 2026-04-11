@@ -3,4 +3,5 @@ class ApiConstants {
   static const String register = "auth/register";
   static const String login = "auth/login";
   static const String cities = "cities";
+  static const String sites = "sites";
 }

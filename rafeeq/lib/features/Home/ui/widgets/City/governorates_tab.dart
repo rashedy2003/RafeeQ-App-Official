@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dio/dio.dart';
 
 import '../../../../../core/networking/api_constants.dart';
+import '../landmarks_sites/landmarks_sites_screen.dart';
 import 'cities_api_service.dart';
 import 'cities_cubit.dart';
 import 'cities_state.dart';
@@ -113,8 +114,10 @@ class GovernoratesTab extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                AttractionsScreen(governorateName: city.name),
+            builder: (context) => LandmarksSitesScreen(
+              cityId: city.id,
+              cityName: city.name,
+            ),
           ),
         );
       },
