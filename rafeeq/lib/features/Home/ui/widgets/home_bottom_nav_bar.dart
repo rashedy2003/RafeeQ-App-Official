@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import '../../../../core/theming/theme.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class HomeBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -14,6 +15,9 @@ class HomeBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // AppLocalizations instance
+    final loc = AppLocalizations.of(context)!;
+
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -37,15 +41,27 @@ class HomeBottomNavBar extends StatelessWidget {
           selectedItemColor: ColorsManager.rafeeqYellow,
           unselectedItemColor: Colors.white70,
           onTap: onTap,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          items: [
             BottomNavigationBarItem(
-                icon: Icon(Icons.document_scanner_outlined), label: "Scan"),
-            BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Favs"),
+              icon: const Icon(Icons.home),
+              label: loc.home,
+            ),
             BottomNavigationBarItem(
-                icon: Icon(Icons.turn_sharp_right_sharp), label: "Trips"),
+              icon: const Icon(Icons.document_scanner_outlined),
+              label: loc.scan,
+            ),
             BottomNavigationBarItem(
-                icon: Icon(Icons.mode_of_travel), label: "Governorates"),
+              icon: const Icon(Icons.favorite),
+              label: loc.favs,
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.turn_sharp_right_sharp),
+              label: loc.trips,
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.mode_of_travel),
+              label: loc.governorates,
+            ),
           ],
         ),
       ),

@@ -8,18 +8,20 @@ environment:
   sdk: ^3.10.8
 
 dependencies:
-  camera: ^0.11.1+1
-  path_provider: ^2.0.15
-  path: ^1.8.3
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  camera: ^0.11.1+1
+  path_provider: ^2.0.15
+  path: ^1.8.3
   dio: ^5.9.1
   flutter_bloc: ^9.1.1
   google_fonts: ^8.0.2
   url_launcher: ^6.3.2
   country_picker: ^2.0.27
   flutter_secure_storage: ^10.0.0
+  flutter_localizations:
+    sdk: flutter   # صحح الاسم هنا
 
 dev_dependencies:
   flutter_test:
@@ -27,7 +29,7 @@ dev_dependencies:
   flutter_lints: ^3.0.0
   flutter_launcher_icons: ^0.13.1
 
-# إعدادات الأيقونة (مهم جداً تكون في أول السطر كدة)
+# إعدادات الأيقونة
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
@@ -37,6 +39,7 @@ flutter_launcher_icons:
 
 flutter:
   uses-material-design: true
+  generate: true   # مهم جدًا لتوليد AppLocalizations
 
   assets:
     - assets/images/

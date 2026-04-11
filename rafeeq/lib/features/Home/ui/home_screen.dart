@@ -1,4 +1,4 @@
-import 'package:Rafeeq/features/Home/ui/widgets/governorates_tab.dart';
+import 'package:Rafeeq/features/Home/ui/widgets/City/governorates_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../logic/navigation_cubit/navigation_cubit.dart';
