@@ -15,11 +15,12 @@ class CityModel {
 
   factory CityModel.fromJson(Map<String, dynamic> json) {
     return CityModel(
-      id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      imageUrl: json['imageUrl'],
-      totalSites: json['totalSites'],
+      // ✅ تأمين كامل لكل الحقول
+      id: json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? 'Unknown City',
+      description: json['description']?.toString() ?? '',
+      imageUrl: json['imageUrl']?.toString() ?? '',
+      totalSites: (json['totalSites'] ?? 0) as int,
     );
   }
 }

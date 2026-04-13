@@ -8,9 +8,9 @@ class LandmarksSitesApiService {
   LandmarksSitesApiService(this.dio);
 
   Future<List<LandmarksSitesModel>> getLandmarksSites(String cityId) async {
-    // بيبعت الـ ID كـ Query Parameter باسم city زي ما الـ URL طالب
+    // الـ Dio اللي هنا دلوقت فيه الـ Accept-Language والـ Token بفضل الـ ApiHandler
     final response = await dio.get(
-      ApiConstants.sites, // تأكد إن القيمة هي "sites" في ملف الثوابت
+      ApiConstants.sites,
       queryParameters: {'city': cityId},
     );
 

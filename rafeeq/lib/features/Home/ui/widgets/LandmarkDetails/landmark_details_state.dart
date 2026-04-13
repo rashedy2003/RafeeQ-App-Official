@@ -5,10 +5,11 @@ abstract class LandmarkDetailsState {}
 
 class LandmarkDetailsInitial extends LandmarkDetailsState {}
 class LandmarkDetailsLoading extends LandmarkDetailsState {}
+
 class LandmarkDetailsSuccess extends LandmarkDetailsState {
   final LandmarkDetailsModel details;
   final List<AttractionModel> attractions;
-  final bool isMoreLoading; // عشان نعرف لو بنحمل داتا زيادة في السكرول
+  final bool isMoreLoading;
 
   LandmarkDetailsSuccess({
     required this.details,
@@ -16,6 +17,7 @@ class LandmarkDetailsSuccess extends LandmarkDetailsState {
     this.isMoreLoading = false,
   });
 }
+
 class LandmarkDetailsError extends LandmarkDetailsState {
   final String message;
   LandmarkDetailsError(this.message);

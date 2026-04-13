@@ -5,6 +5,7 @@ import '../../../../core/routing/routes.dart';
 import '../../../../core/networking/secure_storage_helper.dart';
 import '../../../../core/localization/locale_cubit.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../logic/home_cubit/home_cubit.dart';
 
 class HomeDrawer extends StatelessWidget {
   const HomeDrawer({super.key});
@@ -12,6 +13,18 @@ class HomeDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+
+    // قائمة اللغات المدعومة مع أسمائها للعرض
+    final List<Map<String, String>> languages = [
+      {'name': 'العربية', 'code': 'ar'},
+      {'name': 'English', 'code': 'en'},
+      {'name': 'Deutsch (German)', 'code': 'de'},
+      {'name': 'Français (French)', 'code': 'fr'},
+      {'name': 'Italiano (Italian)', 'code': 'it'},
+      {'name': 'Русский (Russian)', 'code': 'ru'},
+      {'name': '日本語 (Japanese)', 'code': 'ja'},
+      {'name': '中文 (Chinese)', 'code': 'zh'},
+    ];
 
     return Drawer(
       backgroundColor: ColorsManager.black,
@@ -36,7 +49,7 @@ class HomeDrawer extends StatelessWidget {
             onTap: () {},
           ),
 
-          // ✅ زرار تغيير اللغة
+          // ✅ زرار تغيير اللغة (يدعم الـ 8 لغات مع تحديث فوري)
           ListTile(
             leading: const Icon(Icons.language, color: ColorsManager.rafeeqYellow),
             title: Text(loc.changeLanguage,
@@ -44,33 +57,49 @@ class HomeDrawer extends StatelessWidget {
             onTap: () {
               showDialog(
                 context: context,
-                builder: (context) {
+                builder: (dialogContext) {
                   return AlertDialog(
-                    backgroundColor: Colors.black,
+                    backgroundColor: ColorsManager.black,
+                    shape: RoundedRectangleBorder(
+                      side: const BorderSide(color: ColorsManager.rafeeqYellow, width: 0.5),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                     title: Text(
                       loc.chooseLanguage,
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: ColorsManager.rafeeqYellow),
                     ),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ListTile(
-                          title: const Text('English',
-                              style: TextStyle(color: Colors.white)),
-                          onTap: () {
-                            context.read<LocaleCubit>().changeToEnglish();
-                            Navigator.pop(context);
-                          },
+                    content: SizedBox(
+                      width: double.maxFinite,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: languages.map((lang) {
+                            return ListTile(
+                              title: Text(
+                                lang['name']!,
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                              // إظهار علامة "صح" بجانب اللغة المختارة حالياً
+                              trailing: context.read<LocaleCubit>().state.languageCode == lang['code']
+                                  ? const Icon(Icons.check_circle, color: ColorsManager.rafeeqYellow)
+                                  : null,
+                              onTap: () async {
+                                // 1. تغيير اللغة وحفظها في الـ SharedPreferences
+                                await context.read<LocaleCubit>().changeLanguage(lang['code']!);
+
+                                // 2. تحديث بيانات الصفحة الرئيسية فوراً باللغة الجديدة
+                                if (context.mounted) {
+                                  context.read<HomeCubit>().getHomeData();
+                                }
+
+                                // 3. قفل الـ Dialog والـ Drawer
+                                Navigator.pop(dialogContext);
+                                Navigator.pop(context);
+                              },
+                            );
+                          }).toList(),
                         ),
-                        ListTile(
-                          title: const Text('العربية',
-                              style: TextStyle(color: Colors.white)),
-                          onTap: () {
-                            context.read<LocaleCubit>().changeToArabic();
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
+                      ),
                     ),
                   );
                 },
@@ -102,7 +131,7 @@ class HomeDrawer extends StatelessWidget {
 
           const Padding(
             padding: EdgeInsets.all(20.0),
-            child: Text('RafeQ v1.0', style: TextStyle(color: Colors.grey)),
+            child: Text('RafeeQ v1.0', style: TextStyle(color: Colors.grey)),
           ),
         ],
       ),

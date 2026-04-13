@@ -5,10 +5,17 @@ class HomeInitial extends HomeState {}
 class HomeLoading extends HomeState {}
 
 class HomeSuccess extends HomeState {
-  final List<Map<String, dynamic>> mustVisitItems;
-  final List<Map<String, dynamic>> hiddenGemsItems;
+  final List<dynamic> mustVisitItems;
+  final List<dynamic> hiddenGemsItems;
+  final List<dynamic> nearYouItems;
+  final List<dynamic> sponsors;
 
-  HomeSuccess(this.mustVisitItems, this.hiddenGemsItems);
+  HomeSuccess({
+    required this.mustVisitItems,
+    required this.hiddenGemsItems,
+    required this.nearYouItems,
+    required this.sponsors,
+  });
 }
 
 class HomeError extends HomeState {

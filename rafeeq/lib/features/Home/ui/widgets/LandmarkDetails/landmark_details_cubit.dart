@@ -1,11 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'Top_attractions/attractions_model.dart';
+import 'package:dio/dio.dart';
 import 'landmark_details_api_service.dart';
 import 'landmark_details_state.dart';
 import 'landmark_details_model.dart';
+import 'Top_attractions/attractions_model.dart';
 
 class LandmarkDetailsCubit extends Cubit<LandmarkDetailsState> {
   final LandmarkDetailsApiService apiService;
+  final _cancelToken = CancelToken();
 
   LandmarkDetailsCubit(this.apiService) : super(LandmarkDetailsInitial());
 
@@ -17,35 +19,30 @@ class LandmarkDetailsCubit extends Cubit<LandmarkDetailsState> {
   Future<void> getInitialData(String siteId) async {
     emit(LandmarkDetailsLoading());
     try {
-      // بنحمل تفاصيل المكان وأول 5 أماكن مقترحة مع بعض
-      currentDetails = await apiService.getLandmarkDetails(siteId);
-      allAttractions = await apiService.getTopAttractions(siteId, 1);
+      currentDetails = await apiService.getLandmarkDetails(siteId, cancelToken: _cancelToken);
+      allAttractions = await apiService.getTopAttractions(siteId, 1, cancelToken: _cancelToken);
 
-      emit(LandmarkDetailsSuccess(
-        details: currentDetails,
-        attractions: allAttractions,
-      ));
+      emit(LandmarkDetailsSuccess(details: currentDetails, attractions: allAttractions));
     } catch (e) {
+      // الحل هنا: فحص النوع قبل استخدام isCancel
+      if (e is DioException && CancelToken.isCancel(e)) return;
+
       emit(LandmarkDetailsError("Failed to load: ${e.toString()}"));
     }
   }
 
   Future<void> loadMoreAttractions(String siteId) async {
     final currentState = state;
-
-    // التأكد إن الحالة الحالية Success وإني مش بحمل داتا فعلياً حالياً وفي داتا باقية
     if (currentState is LandmarkDetailsSuccess && !currentState.isMoreLoading && hasNext) {
-
-      // هنا التصحيح: بنستخدم ":" وليس "="
       emit(LandmarkDetailsSuccess(
-        details: currentDetails,
-        attractions: allAttractions,
-        isMoreLoading: true, // تم التصحيح هنا
+          details: currentDetails,
+          attractions: allAttractions,
+          isMoreLoading: true
       ));
 
       try {
         currentPage++;
-        final nextData = await apiService.getTopAttractions(siteId, currentPage);
+        final nextData = await apiService.getTopAttractions(siteId, currentPage, cancelToken: _cancelToken);
 
         if (nextData.isEmpty) {
           hasNext = false;
@@ -54,18 +51,25 @@ class LandmarkDetailsCubit extends Cubit<LandmarkDetailsState> {
         }
 
         emit(LandmarkDetailsSuccess(
-          details: currentDetails,
-          attractions: allAttractions,
-          isMoreLoading: false, // تم التصحيح هنا
+            details: currentDetails,
+            attractions: allAttractions,
+            isMoreLoading: false
         ));
       } catch (e) {
-        // في حالة الخطأ بنرجع الحالة لـ false عشان يقدر يحاول تاني
+        if (e is DioException && CancelToken.isCancel(e)) return;
+
         emit(LandmarkDetailsSuccess(
-          details: currentDetails,
-          attractions: allAttractions,
-          isMoreLoading: false,
+            details: currentDetails,
+            attractions: allAttractions,
+            isMoreLoading: false
         ));
       }
     }
+  }
+
+  @override
+  Future<void> close() {
+    _cancelToken.cancel(); // إلغاء كل الريكويستات فور خروج المستخدم من الصفحة
+    return super.close();
   }
 }

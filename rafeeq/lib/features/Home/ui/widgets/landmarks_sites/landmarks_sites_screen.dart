@@ -1,8 +1,8 @@
 import 'package:Rafeeq/features/Home/ui/widgets/LandmarkDetails/landmark_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dio/dio.dart';
-import '../../../../../core/networking/api_constants.dart';
+import '../../../../../core/networking/api_handler.dart'; // ✅ استخدم الهاندلر بتاعنا
+import '../../../../../core/localization/locale_cubit.dart'; // ✅ للترجمة الفورية
 import 'landmarks_sites_api_service.dart';
 import 'landmarks_sites_cubit.dart';
 import 'landmarks_sites_state.dart';
@@ -20,52 +20,78 @@ class LandmarksSitesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => LandmarksSitesCubit(
-        LandmarksSitesApiService(
-          Dio(BaseOptions(baseUrl: ApiConstants.baseUrl)),
-        ),
-      )..getLandmarksSites(cityId), // الطلب بيتم بالـ ID
-      child: Scaffold(
-        backgroundColor: const Color(0xFF0F0F0F),
-        appBar: AppBar(
-          title: Text(cityName, style: const TextStyle(color: Colors.white)),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          iconTheme: const IconThemeData(color: Colors.white),
-        ),
-        body: BlocBuilder<LandmarksSitesCubit, LandmarksSitesState>(
-          builder: (context, state) {
-            if (state is LandmarksSitesLoading) {
-              return const Center(child: CircularProgressIndicator(color: Colors.amber));
-            }
-            if (state is LandmarksSitesError) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Text(state.message,
-                      style: const TextStyle(color: Colors.red), textAlign: TextAlign.center),
+    return FutureBuilder(
+      // بنجيب الـ Dio الجاهز اللي فيه الـ Interceptors (اللغة والتوكن)
+        future: ApiHandler.getDio(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Scaffold(
+              backgroundColor: Color(0xFF0F0F0F),
+              body: Center(child: CircularProgressIndicator(color: Colors.amber)),
+            );
+          }
+
+          return BlocProvider(
+            create: (context) => LandmarksSitesCubit(
+              LandmarksSitesApiService(snapshot.data!), // بنباصي الـ Dio الصح
+            )..getLandmarksSites(cityId),
+            child: Scaffold(
+              backgroundColor: const Color(0xFF0F0F0F),
+              appBar: AppBar(
+                centerTitle: true,
+                title: Text(cityName, style: const TextStyle(color: Colors.white)),
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                iconTheme: const IconThemeData(color: Colors.white),
+              ),
+              // ✅ الـ Listener السحري للترجمة الفورية
+              body: BlocListener<LocaleCubit, Locale>(
+                listener: (context, locale) {
+                  context.read<LandmarksSitesCubit>().getLandmarksSites(cityId);
+                },
+                child: BlocBuilder<LandmarksSitesCubit, LandmarksSitesState>(
+                  builder: (context, state) {
+                    if (state is LandmarksSitesLoading) {
+                      return const Center(child: CircularProgressIndicator(color: Colors.amber));
+                    }
+                    if (state is LandmarksSitesError) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Text(state.message,
+                                  style: const TextStyle(color: Colors.red), textAlign: TextAlign.center),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => context.read<LandmarksSitesCubit>().getLandmarksSites(cityId),
+                              child: const Text("Retry"),
+                            )
+                          ],
+                        ),
+                      );
+                    }
+                    if (state is LandmarksSitesSuccess) {
+                      if (state.sites.isEmpty) {
+                        return const Center(
+                          child: Text("No sites found", style: TextStyle(color: Colors.white)),
+                        );
+                      }
+                      return ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: state.sites.length,
+                        itemBuilder: (context, index) => _buildSiteCard(context, state.sites[index]),
+                      );
+                    }
+                    return const SizedBox();
+                  },
                 ),
-              );
-            }
-            if (state is LandmarksSitesSuccess) {
-              if (state.sites.isEmpty) {
-                return const Center(
-                  child: Text("No sites found in this city",
-                      style: TextStyle(color: Colors.white)),
-                );
-              }
-              return ListView.builder(
-                padding: const EdgeInsets.all(16),
-                physics: const BouncingScrollPhysics(), // سكرول ناعم
-                itemCount: state.sites.length,
-                itemBuilder: (context, index) => _buildSiteCard(context, state.sites[index]),
-              );
-            }
-            return const SizedBox();
-          },
-        ),
-      ),
+              ),
+            ),
+          );
+        }
     );
   }
 
@@ -79,7 +105,6 @@ class LandmarksSitesScreen extends StatelessWidget {
       ),
       child: ListTile(
         onTap: () {
-          // الانتقال لشاشة التفاصيل عند الضغط على الكارد
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -95,17 +120,6 @@ class LandmarksSitesScreen extends StatelessWidget {
             width: 80,
             height: 80,
             fit: BoxFit.cover,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) return child;
-              return Container(
-                width: 80,
-                height: 80,
-                color: Colors.white10,
-                child: const Center(
-                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.amber),
-                ),
-              );
-            },
             errorBuilder: (context, error, stackTrace) =>
             const Icon(Icons.image_not_supported, color: Colors.white24, size: 40),
           ),

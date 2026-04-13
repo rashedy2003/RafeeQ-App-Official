@@ -1,47 +1,64 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dio/dio.dart';
+import 'package:geolocator/geolocator.dart';
+import '../../../../core/networking/api_handler.dart';
 import 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
+  // شيلنا تعريف Dio() الـ manual عشان نستخدم الـ Managed Instance
   HomeCubit() : super(HomeInitial());
 
   Future<void> getHomeData() async {
     emit(HomeLoading());
     try {
-      // محاكاة لطلب الـ API (هنغير ده لما نربط فعلياً)
-      await Future.delayed(const Duration(seconds: 2));
+      // 1. جلب الـ Dio Instance اللي فيه الـ Interceptor بتاع اللغة والتوكن
+      final dio = await ApiHandler.getDio();
 
-      // بيانات تجريبية تحتوي على URLs (زي ما هييجي من السيرفر)
-      final mustVisit = [
-        {
-          'title': 'Giza Pyramids',
-          'image': 'https://images.unsplash.com/photo-1503177119275-0aa32b3a9368',
-          'description': 'The only surviving wonder of the ancient world.',
-          'price': '\$45.00'
-        },
-        {
-          'title': 'Luxor Temple',
-          'image': 'https://images.unsplash.com/photo-1572252009286-268acec5ca0a',
-          'description': 'A large Ancient Egyptian temple complex.',
-          'price': '\$30.00'
-        },
-      ];
+      // 2. جلب الموقع الحقيقي للمستخدم
+      Position position = await _determinePosition();
 
-      final hiddenGems = [
-        {
-          'title': 'Abdeen Palace',
-          'image': 'https://images.unsplash.com/photo-1553913861-c0fddf2619ee',
-          'description': 'A masterpiece of architectural history.'
-        },
-        {
-          'title': 'Siwa Oasis',
-          'image': 'https://images.unsplash.com/photo-1590059392604-0c68c62c9383',
-          'description': 'A natural paradise in the desert.'
-        },
-      ];
+      print("📍 Current User Location: ${position.latitude}, ${position.longitude}");
 
-      emit(HomeSuccess(mustVisit, hiddenGems));
+      // 3. تنفيذ الـ Request (الهيدرز هتتضاف أوتوماتيك من الـ ApiHandler)
+      final response = await dio.get(
+        "home", // بما إننا حاطين الـ BaseUrl في الـ Handler بنكتب الـ endpoint بس
+        queryParameters: {
+          'latitude': position.latitude,
+          'longitude': position.longitude,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        emit(HomeSuccess(
+          mustVisitItems: data['mustVisit'] ?? [],
+          hiddenGemsItems: data['hiddenGems'] ?? [],
+          nearYouItems: data['nearYou'] ?? [],
+          sponsors: data['featuredDeals'] ?? [],
+        ));
+      }
     } catch (e) {
-      emit(HomeError("Failed to load home data: $e"));
+      print("❌ Error: $e");
+      emit(HomeError("تأكد من تفعيل الموقع والاتصال بالإنترنت"));
     }
+  }
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return Future.error('Location services are disabled.');
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('Location permissions are permanently denied.');
+    }
+
+    return await Geolocator.getCurrentPosition();
   }
 }

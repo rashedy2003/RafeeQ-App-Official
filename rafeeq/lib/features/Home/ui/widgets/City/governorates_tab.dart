@@ -1,110 +1,111 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dio/dio.dart';
-
-import '../../../../../core/networking/api_constants.dart';
+import '../../../../../core/networking/api_handler.dart'; // ✅ الاستيراد الجديد
+import '../../../../../core/localization/locale_cubit.dart'; // ✅ للترجمة الفورية
 import '../landmarks_sites/landmarks_sites_screen.dart';
 import 'cities_api_service.dart';
 import 'cities_cubit.dart';
 import 'cities_state.dart';
 import 'city_model.dart';
 
-
-
 class GovernoratesTab extends StatelessWidget {
   const GovernoratesTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-// In governorates_tab.dart
+    return FutureBuilder(
+      // ✅ نضمن جلب الـ Dio اللي فيه الهيدرز واللغة قبل بناء الكيوبيت
+      future: ApiHandler.getDio(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator(color: Colors.amber));
+        }
 
-      create: (context) => CitiesCubit(
-        CitiesApiService(
-          Dio(
-            BaseOptions(
-              baseUrl: ApiConstants.baseUrl, // 👈 This tells Dio where to go
-              receiveDataWhenStatusError: true,
-            ),
-          ),
-        ),
-      )..getCities(),      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-
-                const SizedBox(height: 10),
-
-                const Text(
-                  "Select Region",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 8),
-
-                Text(
-                  "Discover sites by city to tailor your Egyptian journey.",
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.6),
-                    fontSize: 14,
-                  ),
-                ),
-
-                const SizedBox(height: 25),
-
-                Expanded(
-                  child: BlocBuilder<CitiesCubit, CitiesState>(
-                    builder: (context, state) {
-
-                      if (state is CitiesLoading) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-
-                      if (state is CitiesError) {
-                        return Center(
-                          child: Text(
-                            state.message,
-                            style: const TextStyle(color: Colors.red),
-                          ),
-                        );
-                      }
-
-                      if (state is CitiesSuccess) {
-                        return GridView.builder(
-                          itemCount: state.cities.length,
-                          gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 15,
-                            mainAxisSpacing: 15,
-                            childAspectRatio: 0.85,
-                          ),
-                          itemBuilder: (context, index) {
-                            final city = state.cities[index];
-                            return _buildCityCard(context, city);
+        return BlocProvider(
+          create: (context) => CitiesCubit(
+            CitiesApiService(snapshot.data!),
+          )..getCities(),
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 10),
+                    const Text(
+                      "Select Region",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Discover sites by city to tailor your Egyptian journey.",
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.6),
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 25),
+                    Expanded(
+                      // ✅ الـ Listener لتحديث المحافظات فور تغيير اللغة
+                      child: BlocListener<LocaleCubit, Locale>(
+                        listener: (context, locale) {
+                          context.read<CitiesCubit>().getCities();
+                        },
+                        child: BlocBuilder<CitiesCubit, CitiesState>(
+                          builder: (context, state) {
+                            if (state is CitiesLoading) {
+                              return const Center(
+                                child: CircularProgressIndicator(color: Colors.amber),
+                              );
+                            }
+                            if (state is CitiesError) {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(state.message, style: const TextStyle(color: Colors.red)),
+                                    const SizedBox(height: 10),
+                                    ElevatedButton(
+                                      onPressed: () => context.read<CitiesCubit>().getCities(),
+                                      child: const Text("Retry"),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                            if (state is CitiesSuccess) {
+                              return GridView.builder(
+                                itemCount: state.cities.length,
+                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 15,
+                                  mainAxisSpacing: 15,
+                                  childAspectRatio: 0.85,
+                                ),
+                                itemBuilder: (context, index) {
+                                  final city = state.cities[index];
+                                  return _buildCityCard(context, city);
+                                },
+                              );
+                            }
+                            return const SizedBox();
                           },
-                        );
-                      }
-
-                      return const SizedBox();
-                    },
-                  ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -130,14 +131,12 @@ class GovernoratesTab extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
             CircleAvatar(
               radius: 38,
               backgroundImage: NetworkImage(city.imageUrl),
+              backgroundColor: Colors.white10,
             ),
-
             const SizedBox(height: 12),
-
             Text(
               city.name,
               style: const TextStyle(
@@ -145,10 +144,9 @@ class GovernoratesTab extends StatelessWidget {
                 fontSize: 17,
                 fontWeight: FontWeight.bold,
               ),
+              textAlign: TextAlign.center,
             ),
-
             const SizedBox(height: 4),
-
             Text(
               "${city.totalSites} Sites",
               style: TextStyle(
@@ -158,24 +156,6 @@ class GovernoratesTab extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class AttractionsScreen extends StatelessWidget {
-  final String governorateName;
-
-  const AttractionsScreen({super.key, required this.governorateName});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.deepPurpleAccent,
-      appBar: AppBar(
-        title: Text(governorateName),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
       ),
     );
   }
