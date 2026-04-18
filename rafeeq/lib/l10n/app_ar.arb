@@ -7,5 +7,10 @@
   "scan": "مسح",
   "favs": "المفضلة",
   "trips": "الرحلات",
-  "governorates": "المحافظات"
+  "governorates": "المحافظات",
+  "my_favorites_places": "الأماكن المفضلة",
+  "no_favorites": "لا توجد مفضلات بعد",
+  "start_adding": "ابدأ بإضافة أماكنك المفضلة!",
+  "retry": "إعادة المحاولة",
+  "error_favorites": "حدث خطأ في تحميل المفضلات"
 }

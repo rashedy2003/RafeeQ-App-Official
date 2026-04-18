@@ -1,3 +1,4 @@
+import 'package:Rafeeq/features/Home/ui/widgets/profile/Profile_Screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theming/theme.dart';
@@ -14,7 +15,7 @@ class HomeDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
 
-    // قائمة اللغات المدعومة مع أسمائها للعرض
+    // قائمة اللغات المدعومة
     final List<Map<String, String>> languages = [
       {'name': 'العربية', 'code': 'ar'},
       {'name': 'English', 'code': 'en'},
@@ -30,6 +31,7 @@ class HomeDrawer extends StatelessWidget {
       backgroundColor: ColorsManager.black,
       child: Column(
         children: [
+          // لوجو التطبيق في الهيدر
           DrawerHeader(
             decoration: const BoxDecoration(color: Colors.black),
             child: Center(
@@ -37,19 +39,34 @@ class HomeDrawer extends StatelessWidget {
             ),
           ),
 
+          // زرار الصفحة الرئيسية
           ListTile(
-            leading: const Icon(Icons.home, color: ColorsManager.rafeeqYellow),
+            leading: const Icon(Icons.home_outlined, color: ColorsManager.rafeeqYellow),
             title: Text(loc.home, style: const TextStyle(color: Colors.white)),
             onTap: () => Navigator.pop(context),
           ),
 
+          // ✅ زرار البروفايل (الجديد)
           ListTile(
-            leading: const Icon(Icons.settings, color: ColorsManager.rafeeqYellow),
+            leading: const Icon(Icons.person_outline, color: ColorsManager.rafeeqYellow),
+            title: const Text("Profile", style: TextStyle(color: Colors.white)), // يمكنك استبدالها بـ loc.profile لو معرفة عندك
+            onTap: () {
+              Navigator.pop(context); // غلق الدراور
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
+            },
+          ),
+
+          // زرار الإعدادات
+          ListTile(
+            leading: const Icon(Icons.settings_outlined, color: ColorsManager.rafeeqYellow),
             title: Text(loc.settings, style: const TextStyle(color: Colors.white)),
             onTap: () {},
           ),
 
-          // ✅ زرار تغيير اللغة (يدعم الـ 8 لغات مع تحديث فوري)
+          // ✅ زرار تغيير اللغة
           ListTile(
             leading: const Icon(Icons.language, color: ColorsManager.rafeeqYellow),
             title: Text(loc.changeLanguage,
@@ -79,20 +96,14 @@ class HomeDrawer extends StatelessWidget {
                                 lang['name']!,
                                 style: const TextStyle(color: Colors.white),
                               ),
-                              // إظهار علامة "صح" بجانب اللغة المختارة حالياً
                               trailing: context.read<LocaleCubit>().state.languageCode == lang['code']
                                   ? const Icon(Icons.check_circle, color: ColorsManager.rafeeqYellow)
                                   : null,
                               onTap: () async {
-                                // 1. تغيير اللغة وحفظها في الـ SharedPreferences
                                 await context.read<LocaleCubit>().changeLanguage(lang['code']!);
-
-                                // 2. تحديث بيانات الصفحة الرئيسية فوراً باللغة الجديدة
                                 if (context.mounted) {
                                   context.read<HomeCubit>().getHomeData();
                                 }
-
-                                // 3. قفل الـ Dialog والـ Drawer
                                 Navigator.pop(dialogContext);
                                 Navigator.pop(context);
                               },
@@ -106,6 +117,8 @@ class HomeDrawer extends StatelessWidget {
               );
             },
           ),
+
+          const Divider(color: Colors.white10, indent: 20, endIndent: 20),
 
           // ✅ Logout
           ListTile(
@@ -131,7 +144,7 @@ class HomeDrawer extends StatelessWidget {
 
           const Padding(
             padding: EdgeInsets.all(20.0),
-            child: Text('RafeeQ v1.0', style: TextStyle(color: Colors.grey)),
+            child: Text('RafeeQ v1.0', style: TextStyle(color: Colors.grey, fontSize: 12)),
           ),
         ],
       ),

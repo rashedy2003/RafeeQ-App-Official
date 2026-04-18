@@ -34,4 +34,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get governorates => 'Governorates';
+
+  @override
+  String get my_favorites_places => 'My Favorites places';
+
+  @override
+  String get no_favorites => 'No Favorites Yet';
+
+  @override
+  String get start_adding => 'Start adding your favorite places!';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get error_favorites => 'An error occurred while loading favorites';
 }

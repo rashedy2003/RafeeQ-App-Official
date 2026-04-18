@@ -16,6 +16,10 @@ class ApiHandler {
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
+            // ✅ منع الكاش نهائياً من الـ Headers
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'Expires': '0',
           },
         ),
       );
@@ -24,8 +28,6 @@ class ApiHandler {
         InterceptorsWrapper(
           onRequest: (options, handler) async {
             final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-            // ✅ التعديل هنا: بنقرأ اللغة "حالا" ونحطها في الـ options بتاعة الطلب ده بالذات
             String lang = prefs.getString('language_code') ?? 'en';
             options.headers['Accept-Language'] = lang;
 
@@ -33,7 +35,6 @@ class ApiHandler {
             if (token != null) {
               options.headers['Authorization'] = 'Bearer $token';
             }
-
             return handler.next(options);
           },
         ),

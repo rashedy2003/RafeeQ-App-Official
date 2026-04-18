@@ -7,5 +7,10 @@
   "scan": "Scan",
   "favs": "Favs",
   "trips": "Trips",
-  "governorates": "Governorates"
+  "governorates": "Governorates",
+  "my_favorites_places": "My Favorites places",
+  "no_favorites": "No Favorites Yet",
+  "start_adding": "Start adding your favorite places!",
+  "retry": "Retry",
+  "error_favorites": "An error occurred while loading favorites"
 }

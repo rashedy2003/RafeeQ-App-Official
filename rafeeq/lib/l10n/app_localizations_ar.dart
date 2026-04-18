@@ -34,4 +34,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get governorates => 'المحافظات';
+
+  @override
+  String get my_favorites_places => 'الأماكن المفضلة';
+
+  @override
+  String get no_favorites => 'لا توجد مفضلات بعد';
+
+  @override
+  String get start_adding => 'ابدأ بإضافة أماكنك المفضلة!';
+
+  @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
+  String get error_favorites => 'حدث خطأ في تحميل المفضلات';
 }

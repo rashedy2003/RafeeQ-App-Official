@@ -4,4 +4,6 @@ class ApiConstants {
   static const String login = "auth/login";
   static const String cities = "cities";
   static const String sites = "sites";
+  static const String profile = "account/profile";
+  static const String favorites = "account/favorites";
 }

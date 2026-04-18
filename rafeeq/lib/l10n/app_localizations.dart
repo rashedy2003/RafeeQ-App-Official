@@ -148,6 +148,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Governorates'**
   String get governorates;
+
+  /// No description provided for @my_favorites_places.
+  ///
+  /// In en, this message translates to:
+  /// **'My Favorites places'**
+  String get my_favorites_places;
+
+  /// No description provided for @no_favorites.
+  ///
+  /// In en, this message translates to:
+  /// **'No Favorites Yet'**
+  String get no_favorites;
+
+  /// No description provided for @start_adding.
+  ///
+  /// In en, this message translates to:
+  /// **'Start adding your favorite places!'**
+  String get start_adding;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @error_favorites.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while loading favorites'**
+  String get error_favorites;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
