@@ -6,6 +6,7 @@ import '../../../../core/routing/routes.dart';
 import '../../../../core/networking/secure_storage_helper.dart';
 import '../../../../core/localization/locale_cubit.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../map/rafeeq_map_screen.dart';
 import '../../logic/home_cubit/home_cubit.dart';
 
 class HomeDrawer extends StatelessWidget {
@@ -19,12 +20,12 @@ class HomeDrawer extends StatelessWidget {
     final List<Map<String, String>> languages = [
       {'name': 'العربية', 'code': 'ar'},
       {'name': 'English', 'code': 'en'},
-      {'name': 'Deutsch (German)', 'code': 'de'},
-      {'name': 'Français (French)', 'code': 'fr'},
-      {'name': 'Italiano (Italian)', 'code': 'it'},
-      {'name': 'Русский (Russian)', 'code': 'ru'},
-      {'name': '日本語 (Japanese)', 'code': 'ja'},
-      {'name': '中文 (Chinese)', 'code': 'zh'},
+    //  {'name': 'Deutsch (German)', 'code': 'de'},
+   //   {'name': 'Français (French)', 'code': 'fr'},
+     // {'name': 'Italiano (Italian)', 'code': 'it'},
+      //{'name': 'Русский (Russian)', 'code': 'ru'},
+    //  {'name': '日本語 (Japanese)', 'code': 'ja'},
+      //{'name': '中文 (Chinese)', 'code': 'zh'},
     ];
 
     return Drawer(
@@ -40,18 +41,18 @@ class HomeDrawer extends StatelessWidget {
           ),
 
           // زرار الصفحة الرئيسية
-          ListTile(
-            leading: const Icon(Icons.home_outlined, color: ColorsManager.rafeeqYellow),
-            title: Text(loc.home, style: const TextStyle(color: Colors.white)),
-            onTap: () => Navigator.pop(context),
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.home_outlined, color: ColorsManager.rafeeqYellow),
+          //   title: Text(loc.home, style: const TextStyle(color: Colors.white)),
+          //   onTap: () => Navigator.pop(context),
+          // ),
 
-          // ✅ زرار البروفايل (الجديد)
+          // زرار البروفايل
           ListTile(
             leading: const Icon(Icons.person_outline, color: ColorsManager.rafeeqYellow),
-            title: const Text("Profile", style: TextStyle(color: Colors.white)), // يمكنك استبدالها بـ loc.profile لو معرفة عندك
+            title: const Text("Profile", style: TextStyle(color: Colors.white)),
             onTap: () {
-              Navigator.pop(context); // غلق الدراور
+              Navigator.pop(context);
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const ProfileScreen()),
@@ -59,14 +60,27 @@ class HomeDrawer extends StatelessWidget {
             },
           ),
 
-          // زرار الإعدادات
+          // 🗺️ زرار الخريطة الاستكشافية (الجديد)
           ListTile(
-            leading: const Icon(Icons.settings_outlined, color: ColorsManager.rafeeqYellow),
-            title: Text(loc.settings, style: const TextStyle(color: Colors.white)),
-            onTap: () {},
+            leading: const Icon(Icons.map_outlined, color: ColorsManager.rafeeqYellow),
+            title: const Text("Explore Map", style: TextStyle(color: Colors.white)),
+            onTap: () {
+              Navigator.pop(context); // غلق الدراور
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const RafeeqMapScreen()),
+              );
+            },
           ),
 
-          // ✅ زرار تغيير اللغة
+          // زرار الإعدادات
+          // ListTile(
+          //   leading: const Icon(Icons.settings_outlined, color: ColorsManager.rafeeqYellow),
+          //   title: Text(loc.settings, style: const TextStyle(color: Colors.white)),
+          //   onTap: () {},
+          // ),
+
+          // زرار تغيير اللغة
           ListTile(
             leading: const Icon(Icons.language, color: ColorsManager.rafeeqYellow),
             title: Text(loc.changeLanguage,
@@ -120,7 +134,7 @@ class HomeDrawer extends StatelessWidget {
 
           const Divider(color: Colors.white10, indent: 20, endIndent: 20),
 
-          // ✅ Logout
+          // Logout
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.redAccent),
             title: Text(

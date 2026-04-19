@@ -6,4 +6,6 @@ class ApiConstants {
   static const String sites = "sites";
   static const String profile = "account/profile";
   static const String favorites = "account/favorites";
+  static const String uploadImage = "scanner/scan-image";
+  static const String places = "map/places";
 }

@@ -1,64 +1,57 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dio/dio.dart';
 import 'package:geolocator/geolocator.dart';
-import '../../../../core/networking/api_handler.dart';
 import 'home_state.dart';
+import '../../../../core/networking/api_handler.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  // شيلنا تعريف Dio() الـ manual عشان نستخدم الـ Managed Instance
   HomeCubit() : super(HomeInitial());
 
   Future<void> getHomeData() async {
     emit(HomeLoading());
+
+    bool locationEnabled = false;
+    Position? position;
+
     try {
-      // 1. جلب الـ Dio Instance اللي فيه الـ Interceptor بتاع اللغة والتوكن
+      position = await _determinePosition();
+      locationEnabled = true;
+    } catch (e) {
+      locationEnabled = false;
+    }
+
+    try {
       final dio = await ApiHandler.getDio();
-
-      // 2. جلب الموقع الحقيقي للمستخدم
-      Position position = await _determinePosition();
-
-      print("📍 Current User Location: ${position.latitude}, ${position.longitude}");
-
-      // 3. تنفيذ الـ Request (الهيدرز هتتضاف أوتوماتيك من الـ ApiHandler)
       final response = await dio.get(
-        "home", // بما إننا حاطين الـ BaseUrl في الـ Handler بنكتب الـ endpoint بس
-        queryParameters: {
+        "home",
+        queryParameters: position != null ? {
           'latitude': position.latitude,
           'longitude': position.longitude,
-        },
+        } : null,
       );
 
       if (response.statusCode == 200) {
-        final data = response.data;
         emit(HomeSuccess(
-          mustVisitItems: data['mustVisit'] ?? [],
-          hiddenGemsItems: data['hiddenGems'] ?? [],
-          nearYouItems: data['nearYou'] ?? [],
-          sponsors: data['featuredDeals'] ?? [],
+          mustVisitItems: response.data['mustVisit'] ?? [],
+          hiddenGemsItems: response.data['hiddenGems'] ?? [],
+          nearYouItems: response.data['nearYou'] ?? [],
+          sponsors: response.data['featuredDeals'] ?? [],
+          isLocationEnabled: locationEnabled,
         ));
       }
     } catch (e) {
-      print("❌ Error: $e");
-      emit(HomeError("تأكد من تفعيل الموقع والاتصال بالإنترنت"));
+      emit(HomeError("حدث خطأ في الاتصال"));
     }
   }
 
   Future<Position> _determinePosition() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) return Future.error('Location services are disabled.');
+    if (!serviceEnabled) throw 'Disabled';
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
+      if (permission == LocationPermission.denied) throw 'Denied';
     }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error('Location permissions are permanently denied.');
-    }
-
     return await Geolocator.getCurrentPosition();
   }
 }

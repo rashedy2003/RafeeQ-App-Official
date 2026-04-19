@@ -178,6 +178,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An error occurred while loading favorites'**
   String get error_favorites;
+
+  /// No description provided for @must_visit.
+  ///
+  /// In en, this message translates to:
+  /// **'Must Visit'**
+  String get must_visit;
+
+  /// No description provided for @special_offers.
+  ///
+  /// In en, this message translates to:
+  /// **'Special Offers'**
+  String get special_offers;
+
+  /// No description provided for @hidden_gems.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden Gems'**
+  String get hidden_gems;
+
+  /// No description provided for @near_you.
+  ///
+  /// In en, this message translates to:
+  /// **'Near You'**
+  String get near_you;
+
+  /// No description provided for @no_near_places.
+  ///
+  /// In en, this message translates to:
+  /// **'No places found near your current location.'**
+  String get no_near_places;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

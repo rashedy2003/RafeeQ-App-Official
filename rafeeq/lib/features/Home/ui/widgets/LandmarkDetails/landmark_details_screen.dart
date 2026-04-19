@@ -7,7 +7,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../../core/networking/api_handler.dart';
 import '../../../../../core/localization/locale_cubit.dart';
 import '../../../../../core/theming/theme.dart';
-// ✅ تأكد من صحة مسار الـ FavoritesCubit
 import '../Favorite/FavoritesCubit.dart';
 import 'Top_attractions/attraction_details_screen.dart';
 import 'Top_attractions/attractions_model.dart';
@@ -379,29 +378,44 @@ class _MapPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        final String googleMapsUrl = "https://www.google.com/maps/search/?api=1&query=$lat,$lng";
+        final String googleMapsUrl = "https://www.google.com/maps/search/?api=1&query=${lat},${lng}";
         if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
           await launchUrl(Uri.parse(googleMapsUrl), mode: LaunchMode.externalApplication);
         }
       },
       child: Container(
-        height: 180, width: double.infinity,
+        height: 180,
+        width: double.infinity,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.white.withOpacity(0.1)),
+          // إضافة صورة الخريطة من الأسيتس هنا
+          image: const DecorationImage(
+            image: AssetImage("assets/images/map.png"),
+            fit: BoxFit.cover,
+          ),
         ),
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Container(color: Colors.white.withOpacity(0.05)),
+            // طبقة تعتيم خفيفة عشان النص يظهر بوضوح فوق الصورة
+            Container(color: Colors.black.withOpacity(0.2)),
             const Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.map_outlined, color: ColorsManager.rafeeqYellow, size: 45),
+                  // تغيير الأيقونة للأحمر زي ما طلبت
+                  Icon(Icons.location_on, color: Colors.red, size: 45),
                   SizedBox(height: 10),
-                  Text("Tap to open Google Maps", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                  Text(
+                    "Tap to open Google Maps",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      shadows: [Shadow(color: Colors.black, blurRadius: 8)],
+                    ),
+                  ),
                 ],
               ),
             ),

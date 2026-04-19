@@ -49,4 +49,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get error_favorites => 'An error occurred while loading favorites';
+
+  @override
+  String get must_visit => 'Must Visit';
+
+  @override
+  String get special_offers => 'Special Offers';
+
+  @override
+  String get hidden_gems => 'Hidden Gems';
+
+  @override
+  String get near_you => 'Near You';
+
+  @override
+  String get no_near_places => 'No places found near your current location.';
 }

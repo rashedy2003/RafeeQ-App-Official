@@ -12,5 +12,10 @@
   "no_favorites": "No Favorites Yet",
   "start_adding": "Start adding your favorite places!",
   "retry": "Retry",
-  "error_favorites": "An error occurred while loading favorites"
+  "error_favorites": "An error occurred while loading favorites",
+  "must_visit": "Must Visit",
+  "special_offers": "Special Offers",
+  "hidden_gems": "Hidden Gems",
+  "near_you": "Near You",
+  "no_near_places": "No places found near your current location."
 }

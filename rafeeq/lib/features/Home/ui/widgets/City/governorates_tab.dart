@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../../core/networking/api_handler.dart'; // ✅ الاستيراد الجديد
-import '../../../../../core/localization/locale_cubit.dart'; // ✅ للترجمة الفورية
-import '../landmarks_sites/landmarks_sites_screen.dart';
+import '../../../../../core/networking/api_handler.dart';
+import '../../../../../core/localization/locale_cubit.dart';
 import 'cities_api_service.dart';
 import 'cities_cubit.dart';
 import 'cities_state.dart';
 import 'city_model.dart';
+import '../landmarks_sites/landmarks_sites_screen.dart';
 
 class GovernoratesTab extends StatelessWidget {
   const GovernoratesTab({super.key});
@@ -14,7 +14,7 @@ class GovernoratesTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      // ✅ نضمن جلب الـ Dio اللي فيه الهيدرز واللغة قبل بناء الكيوبيت
+      // الريكوست ده مش هيبدأ غير لما LazyLoadWrapper في الهوم يبني التاب دي
       future: ApiHandler.getDio(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
@@ -22,6 +22,7 @@ class GovernoratesTab extends StatelessWidget {
         }
 
         return BlocProvider(
+          // الـ Cubit بيبدأ يسحب الداتا (getCities) أول ما التاب تظهر
           create: (context) => CitiesCubit(
             CitiesApiService(snapshot.data!),
           )..getCities(),
@@ -52,7 +53,6 @@ class GovernoratesTab extends StatelessWidget {
                     ),
                     const SizedBox(height: 25),
                     Expanded(
-                      // ✅ الـ Listener لتحديث المحافظات فور تغيير اللغة
                       child: BlocListener<LocaleCubit, Locale>(
                         listener: (context, locale) {
                           context.read<CitiesCubit>().getCities();

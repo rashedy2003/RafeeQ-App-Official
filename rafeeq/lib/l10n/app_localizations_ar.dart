@@ -49,4 +49,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get error_favorites => 'حدث خطأ في تحميل المفضلات';
+
+  @override
+  String get must_visit => 'يجب زيارتها';
+
+  @override
+  String get special_offers => 'عروض خاصة';
+
+  @override
+  String get hidden_gems => 'جواهر خفية';
+
+  @override
+  String get near_you => 'بالقرب منك';
+
+  @override
+  String get no_near_places => 'لا توجد أماكن قريبة من موقعك الحالي.';
 }

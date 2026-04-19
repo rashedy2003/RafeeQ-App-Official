@@ -4,7 +4,8 @@ class AttractionDetailsModel {
   final String description;
   final double latitude;
   final double longitude;
-  final String historicalPeriodDisplay;
+  // التعديل هنا: تحويلها إلى قائمة
+  final List<String> historicalPeriods;
   final String locationDescription;
   final List<String> images;
 
@@ -14,7 +15,7 @@ class AttractionDetailsModel {
     required this.description,
     required this.latitude,
     required this.longitude,
-    required this.historicalPeriodDisplay,
+    required this.historicalPeriods,
     required this.locationDescription,
     required this.images,
   });
@@ -24,13 +25,18 @@ class AttractionDetailsModel {
         .map((img) => img['url'] as String)
         .toList();
 
+    // التأكد من استخراج قائمة الفترات التاريخية بشكل صحيح
+    var periodsList = (json['historicalPeriods'] as List?)
+        ?.map((p) => p.toString())
+        .toList() ?? [];
+
     return AttractionDetailsModel(
       id: json['id'] ?? '',
       name: json['name'] ?? '',
       description: json['description'] ?? '',
       latitude: json['location']['latitude']?.toDouble() ?? 0.0,
       longitude: json['location']['longitude']?.toDouble() ?? 0.0,
-      historicalPeriodDisplay: json['historicalPeriodDisplay'] ?? '',
+      historicalPeriods: periodsList,
       locationDescription: json['locationDescription'] ?? '',
       images: imagesList.isNotEmpty ? imagesList : [],
     );
