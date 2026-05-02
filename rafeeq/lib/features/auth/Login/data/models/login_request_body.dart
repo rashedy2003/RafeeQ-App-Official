@@ -1,11 +1,17 @@
 class LoginRequestBody {
-  final String email;
-  final String password;
+  final String? email;
+  final String? password;
+  final String? idToken;
 
-  LoginRequestBody({required this.email, required this.password});
+  LoginRequestBody({this.email, this.password, this.idToken});
 
-  Map<String, dynamic> toJson() => {
-    'email': email,
-    'password': password,
-  };
+  Map<String, dynamic> toJson() {
+    if (idToken != null) {
+      return {'idToken': idToken};
+    }
+    return {
+      'email': email,
+      'password': password,
+    };
+  }
 }

@@ -64,4 +64,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get no_near_places => 'No places found near your current location.';
+
+  @override
+  String get error_connection => 'Internet connection issue';
+
+  @override
+  String get error_server => 'Sorry, a server error occurred';
+
+  @override
+  String get error_unexpected => 'An unexpected error occurred';
+
+  @override
+  String get error_gps_disabled => 'Please enable GPS to see nearby places';
+
+  @override
+  String get journey_heart_egypt => 'Journey through the heart of Egypt';
+
+  @override
+  String get search_governorate => 'Search for a governorate...';
+
+  @override
+  String get no_matches_found => 'No matches found';
+
+  @override
+  String get search => 'Search in';
+
+  @override
+  String get search_egypt_landmarks => 'Discover places Egypt ...';
+
+  @override
+  String get search_hint_home => 'Search for monuments, museums, or cities...';
+
+  @override
+  String get no_landmarks_found => 'We couldn\'t find any sites matching your search.';
 }

@@ -17,5 +17,16 @@
   "special_offers": "عروض خاصة",
   "hidden_gems": "جواهر خفية",
   "near_you": "بالقرب منك",
-  "no_near_places": "لا توجد أماكن قريبة من موقعك الحالي."
+  "no_near_places": "لا توجد أماكن قريبة من موقعك الحالي.",
+  "error_connection": "مشكلة في الاتصال بالإنترنت",
+  "error_server": "عذراً، حدث خطأ في الخادم (Server)",
+  "error_unexpected": "حدث خطأ غير متوقع",
+  "error_gps_disabled": "برجاء تفعيل الـ GPS لرؤية الأماكن القريبة",
+  "journey_heart_egypt": "رحلة عبر قلب مصر",
+  "search_governorate": "ابحث عن محافظة...",
+  "no_matches_found": "لم يتم العثور على نتائج",
+  "search": "ابحث في",
+  "search_egypt_landmarks": "اكتشف كنوز مصر ...",
+  "search_hint_home": "ابحث عن آثار، متاحف، أو مدن...",
+  "no_landmarks_found": "لم نجد أماكن تطابق بحثك حالياً."
 }

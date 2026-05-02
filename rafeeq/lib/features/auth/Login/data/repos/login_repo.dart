@@ -6,7 +6,13 @@ class LoginRepo {
   final LoginApiService _apiService;
   LoginRepo(this._apiService);
 
+  // اللوجين العادي
   Future<LoginResponse> login(LoginRequestBody requestBody) async {
     return await _apiService.login(requestBody);
+  }
+
+  // ✅ نداء جوجل الجديد
+  Future<LoginResponse> loginWithGoogle(LoginRequestBody requestBody) async {
+    return await _apiService.loginGoogle(requestBody);
   }
 }

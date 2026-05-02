@@ -1,3 +1,4 @@
+import 'dart:developer'; // Necessary for organized logging
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api_constants.dart';
@@ -11,13 +12,12 @@ class ApiHandler {
       _dio = Dio(
         BaseOptions(
           baseUrl: ApiConstants.baseUrl,
-// في الـ ApiHandler
           connectTimeout: const Duration(seconds: 60),
           receiveTimeout: const Duration(seconds: 60),
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            // ✅ منع الكاش نهائياً من الـ Headers
+            // Disable caching to get fresh data
             'Cache-Control': 'no-cache',
             'Pragma': 'no-cache',
             'Expires': '0',
@@ -25,6 +25,7 @@ class ApiHandler {
         ),
       );
 
+      // 1. Existing Interceptor for Auth & Language
       _dio!.interceptors.add(
         InterceptorsWrapper(
           onRequest: (options, handler) async {
@@ -37,6 +38,19 @@ class ApiHandler {
               options.headers['Authorization'] = 'Bearer $token';
             }
             return handler.next(options);
+          },
+        ),
+      );
+
+      // 2. Added LogInterceptor for full API transparency
+      _dio!.interceptors.add(
+        LogInterceptor(
+          requestBody: true,    // Prints request data
+          responseBody: true,   // Prints response data
+          requestHeader: true,  // Prints headers (useful to check Token/Lang)
+          logPrint: (object) {
+            // Using log with a specific name makes it easy to filter in VS Code/Android Studio
+            log(object.toString(), name: 'RafeeQ_API');
           },
         ),
       );

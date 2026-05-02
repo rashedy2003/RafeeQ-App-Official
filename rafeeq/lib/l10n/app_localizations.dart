@@ -208,6 +208,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No places found near your current location.'**
   String get no_near_places;
+
+  /// No description provided for @error_connection.
+  ///
+  /// In en, this message translates to:
+  /// **'Internet connection issue'**
+  String get error_connection;
+
+  /// No description provided for @error_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorry, a server error occurred'**
+  String get error_server;
+
+  /// No description provided for @error_unexpected.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred'**
+  String get error_unexpected;
+
+  /// No description provided for @error_gps_disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enable GPS to see nearby places'**
+  String get error_gps_disabled;
+
+  /// No description provided for @journey_heart_egypt.
+  ///
+  /// In en, this message translates to:
+  /// **'Journey through the heart of Egypt'**
+  String get journey_heart_egypt;
+
+  /// No description provided for @search_governorate.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for a governorate...'**
+  String get search_governorate;
+
+  /// No description provided for @no_matches_found.
+  ///
+  /// In en, this message translates to:
+  /// **'No matches found'**
+  String get no_matches_found;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search in'**
+  String get search;
+
+  /// No description provided for @search_egypt_landmarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover places Egypt ...'**
+  String get search_egypt_landmarks;
+
+  /// No description provided for @search_hint_home.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for monuments, museums, or cities...'**
+  String get search_hint_home;
+
+  /// No description provided for @no_landmarks_found.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t find any sites matching your search.'**
+  String get no_landmarks_found;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

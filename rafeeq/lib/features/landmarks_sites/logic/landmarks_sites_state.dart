@@ -1,4 +1,4 @@
-import 'landmarks_sites_model.dart';
+import '../data/models/landmarks_sites_model.dart';
 
 abstract class LandmarksSitesState {}
 

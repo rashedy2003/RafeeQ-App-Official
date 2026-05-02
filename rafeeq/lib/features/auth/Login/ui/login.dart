@@ -88,7 +88,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                     const SizedBox(height: 15),
 
-                                    // الجزء البريميوم: الترحيب بخط Montserrat
                                     _buildPremiumWelcome(),
 
                                     const SizedBox(height: 45),
@@ -122,6 +121,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                     _buildSignInButton(state, context),
 
+                                    const SizedBox(height: 15),
+
+                                    // زرار جوجل الجديد
+                                    _buildGoogleSignInButton(state, context),
+
                                     const SizedBox(height: 25),
 
                                     _buildSignUpRedirect(context).animate().fadeIn(delay: 1200.ms),
@@ -130,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                     Text("2026 RAFEQ TRAVEL EGYPT\nSECURE ENCRYPTED ACCESS",
                                         textAlign: TextAlign.center,
-                                        style: GoogleFonts.montserrat( // توحيد الخط
+                                        style: GoogleFonts.montserrat(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w600,
                                             color: ColorsManager.rafeeqYellow.withOpacity(0.4),
@@ -158,9 +162,9 @@ class _LoginScreenState extends State<LoginScreen> {
     return Text(
       "Welcome back to RafeeQ",
       textAlign: TextAlign.center,
-      style: GoogleFonts.montserrat( // خط بريميوم جداً
+      style: GoogleFonts.montserrat(
         fontSize: 18,
-        fontWeight: FontWeight.w500, // Semi-Bold ليكون أوضح وفخم
+        fontWeight: FontWeight.w500,
         color: Colors.white,
         letterSpacing: 0.5,
       ),
@@ -278,6 +282,40 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     ).animate(onPlay: (c) => c.repeat())
         .shimmer(delay: 4.seconds, duration: 2.seconds, color: Colors.white30);
+  }
+
+  // ميثود زرار جوجل الجديد بنفس ستايل شاشتك
+  Widget _buildGoogleSignInButton(LoginState state, BuildContext context) {
+    return InkWell(
+      onTap: state is LoginLoading ? null : () => context.read<LoginCubit>().loginWithGoogle(),
+      child: Container(
+        width: double.infinity,
+        height: 58,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: Colors.white.withOpacity(0.05),
+          border: Border.all(color: Colors.white.withOpacity(0.1)),
+        ),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.g_mobiledata, color: Colors.white, size: 30),
+              const SizedBox(width: 10),
+              Text(
+                "CONTINUE WITH GOOGLE",
+                style: GoogleFonts.montserrat(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  letterSpacing: 1,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ).animate().fadeIn(delay: 1000.ms);
   }
 
   Widget _buildSignUpRedirect(BuildContext context) {

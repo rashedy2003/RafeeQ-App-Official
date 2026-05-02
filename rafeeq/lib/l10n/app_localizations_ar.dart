@@ -64,4 +64,37 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get no_near_places => 'لا توجد أماكن قريبة من موقعك الحالي.';
+
+  @override
+  String get error_connection => 'مشكلة في الاتصال بالإنترنت';
+
+  @override
+  String get error_server => 'عذراً، حدث خطأ في الخادم (Server)';
+
+  @override
+  String get error_unexpected => 'حدث خطأ غير متوقع';
+
+  @override
+  String get error_gps_disabled => 'برجاء تفعيل الـ GPS لرؤية الأماكن القريبة';
+
+  @override
+  String get journey_heart_egypt => 'رحلة عبر قلب مصر';
+
+  @override
+  String get search_governorate => 'ابحث عن محافظة...';
+
+  @override
+  String get no_matches_found => 'لم يتم العثور على نتائج';
+
+  @override
+  String get search => 'ابحث في';
+
+  @override
+  String get search_egypt_landmarks => 'اكتشف كنوز مصر ...';
+
+  @override
+  String get search_hint_home => 'ابحث عن آثار، متاحف، أو مدن...';
+
+  @override
+  String get no_landmarks_found => 'لم نجد أماكن تطابق بحثك حالياً.';
 }

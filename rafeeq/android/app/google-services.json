@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "116814442413",
+    "project_id": "rafeeq-5afbb",
+    "storage_bucket": "rafeeq-5afbb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:116814442413:android:3fb23673a9b321751c7b24",
+        "android_client_info": {
+          "package_name": "com.example.rafeeq"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "116814442413-fpm02avjt4mdhemv4el31mt9noqnb07l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.rafeeq",
+            "certificate_hash": "4500571e19053c8c1964a493fcf7ceb4f8fd000a"
+          }
+        },
+        {
+          "client_id": "116814442413-pch0bv0djq1efnvov9bpp10bf1jmvib3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsotOf18soD332QkUjZuvwb-bxMZmYSCY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "116814442413-p1fblqm20m5f5fmp2764fon1d45rnteh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

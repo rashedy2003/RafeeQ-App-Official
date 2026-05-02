@@ -17,5 +17,16 @@
   "special_offers": "Special Offers",
   "hidden_gems": "Hidden Gems",
   "near_you": "Near You",
-  "no_near_places": "No places found near your current location."
+  "no_near_places": "No places found near your current location.",
+  "error_connection": "Internet connection issue",
+  "error_server": "Sorry, a server error occurred",
+  "error_unexpected": "An unexpected error occurred",
+  "error_gps_disabled": "Please enable GPS to see nearby places",
+  "journey_heart_egypt": "Journey through the heart of Egypt",
+  "search_governorate": "Search for a governorate...",
+  "no_matches_found": "No matches found",
+  "search": "Search in",
+  "search_egypt_landmarks": "Discover places Egypt ...",
+  "search_hint_home": "Search for monuments, museums, or cities...",
+  "no_landmarks_found": "We couldn't find any sites matching your search."
 }

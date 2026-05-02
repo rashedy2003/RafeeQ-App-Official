@@ -1,14 +1,14 @@
 import 'dart:ui';
-import 'package:Rafeeq/features/Home/ui/widgets/City/governorates_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../Home_Tap/ui/home_screen.dart';
+import '../../governorates/ui/governorates_tab.dart';
 import '../logic/navigation_cubit/navigation_cubit.dart';
 import '../logic/navigation_cubit/navigation_state.dart';
 import 'widgets/favorites_tab.dart';
-import 'widgets/home_tab.dart';
 import 'widgets/scan_screen/scan_tab.dart';
 import 'widgets/trips_tab.dart';
 import '../../../core/theming/theme.dart';
