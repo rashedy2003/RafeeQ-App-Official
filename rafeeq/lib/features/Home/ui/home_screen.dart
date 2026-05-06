@@ -6,11 +6,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../Home_Tap/ui/home_screen.dart';
 import '../../governorates/ui/governorates_tab.dart';
+import '../../scan_screen/scan_tab.dart';
 import '../logic/navigation_cubit/navigation_cubit.dart';
 import '../logic/navigation_cubit/navigation_state.dart';
 import 'widgets/favorites_tab.dart';
-import 'widgets/scan_screen/scan_tab.dart';
-import 'widgets/trips_tab.dart';
+import '../../Trip_Tap/trips_tab.dart';
 import '../../../core/theming/theme.dart';
 import 'widgets/home_drawer.dart';
 import 'widgets/home_background.dart';

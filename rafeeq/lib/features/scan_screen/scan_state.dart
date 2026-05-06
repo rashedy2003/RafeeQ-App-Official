@@ -1,5 +1,5 @@
 import 'package:camera/camera.dart';
-import 'scan_model.dart'; // استيراد الموديل
+import 'scan_model.dart';
 
 abstract class ScanState {}
 
@@ -12,8 +12,8 @@ class CameraReady extends ScanState {
 }
 
 class ScanSuccess extends ScanState {
-  final String localImagePath; // الصورة اللي المستخدم صورها بالموبايل
-  final ScanModel scanResult;   // البيانات اللي رجعت من السيرفر (الموديل)
+  final String localImagePath;
+  final ScanModel scanResult;
   ScanSuccess(this.localImagePath, this.scanResult);
 }
 
@@ -21,13 +21,6 @@ class ScanError extends ScanState {
   final String message;
   ScanError(this.message);
 }
-
-
-
-
-
-
-
 
 
 

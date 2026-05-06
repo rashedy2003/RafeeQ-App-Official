@@ -9,5 +9,6 @@ class ApiConstants {
   static const String uploadImage = "scanner/scan-image";
   static const String places = "map/places";
   static const String loginGoogle = "auth/login-google";
+  static const String trips = "trips";
 
 }

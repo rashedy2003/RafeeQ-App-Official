@@ -3,22 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-// استبدل المسارات دي بمسارات مشروعك الحقيقية
-
-import '../../../../../core/theming/theme.dart';
+import '../../../../../core/theming/theme.dart'; // تأكد من المسارات
 import 'scan_model.dart';
 
 class ScanResultScreen extends StatefulWidget {
-  final String localImagePath;
   final ScanModel scanResult;
+  final String localImagePath;
   final String languageCode;
 
   const ScanResultScreen({
     super.key,
-    required this.localImagePath,
     required this.scanResult,
-    required this.languageCode,
+    required this.localImagePath,
+    this.languageCode = 'en',
   });
 
   @override
@@ -56,28 +53,19 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
     });
   }
 
-  // ميثود إضافية لضمان تنظيف الميموري 100%
   @override
   void dispose() {
-    // 1. وقف الصوت فوراً
     _flutterTts.stop();
-
-    // 2. تصفير كل الـ Handlers عشان الـ Plugin ميبعتش أي Logs للصفحة وهي مقفولة
     _flutterTts.setStartHandler(() {});
     _flutterTts.setCompletionHandler(() {});
     _flutterTts.setErrorHandler((msg) {});
     _flutterTts.setCancelHandler(() {});
-
-    // 3. طباعة تأكيد في الـ Debug Console إن الصفحة اتمسحت
-    debugPrint("Refeeq_Log: ScanResultScreen Disposed Successfully.");
-
+    debugPrint("RafeeQ_Log: ScanResultScreen Disposed Successfully.");
     super.dispose();
   }
 
-  // ميثود للرجوع تضمن توقف كل شيء قبل إغلاق الصفحة
-  Future<bool> _stopAndPop() async {
+  Future<void> _stopAndPop() async {
     await _flutterTts.stop();
-    return true;
   }
 
   void _updateConfig(double? rate, double? p) async {
@@ -112,9 +100,11 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    // استخدام PopScope لضمان التنظيف لو اليوزر رجع بزرار الموبايل
     return PopScope(
-      onPopInvokedWithResult: (didPop, result) => _stopAndPop(),
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) await _stopAndPop();
+      },
       child: Scaffold(
         backgroundColor: ColorsManager.black,
         body: CustomScrollView(
@@ -330,9 +320,9 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
           backgroundColor: Colors.black45,
           child: Icon(Icons.arrow_back_ios_new, color: ColorsManager.white, size: 18),
         ),
-        onPressed: () {
-          _stopAndPop();
-          Navigator.pop(context);
+        onPressed: () async {
+          await _stopAndPop();
+          if (mounted) Navigator.pop(context);
         },
       ),
       flexibleSpace: FlexibleSpaceBar(
@@ -355,12 +345,39 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
   }
 
   Widget _buildResponsiveImage() {
+    // 1. عرض الصورة المحلية (اللي لسه متصورة)
     if (widget.localImagePath.isNotEmpty && !widget.localImagePath.startsWith('http')) {
-      return Image.file(File(widget.localImagePath), fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Image.network(widget.scanResult.images?.first ?? "", fit: BoxFit.cover),
+      if (File(widget.localImagePath).existsSync()) {
+        return Image.file(File(widget.localImagePath), fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _buildNetworkFallback(),
+        );
+      }
+    }
+    // 2. لو مفيش محلي أو اتمسحت، اعرض من السيرفر
+    return _buildNetworkFallback();
+  }
+
+  Widget _buildNetworkFallback() {
+    // استخدام أول صورة من القائمة الجديدة (SiteImage object)
+    if (widget.scanResult.images != null && widget.scanResult.images!.isNotEmpty) {
+      return Image.network(
+        widget.scanResult.images!.first.url ?? "",
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _buildMainImageFallback(),
       );
     }
-    return Image.network(widget.scanResult.images?.first ?? "", fit: BoxFit.cover);
+    return _buildMainImageFallback();
+  }
+
+  Widget _buildMainImageFallback() {
+    return Image.network(
+      widget.scanResult.mainImageUrl ?? "",
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => Container(
+        color: ColorsManager.surfaceDark,
+        child: const Icon(Icons.image_not_supported, color: ColorsManager.rafeeqYellow, size: 50),
+      ),
+    );
   }
 }
 

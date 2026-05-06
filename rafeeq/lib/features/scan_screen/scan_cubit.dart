@@ -1,13 +1,15 @@
-import 'dart:io';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_cropper/image_cropper.dart'; // ضيف دي
+import 'package:permission_handler/permission_handler.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart'; // عشان الألوان في الـ UI Settings
+import 'package:flutter/material.dart';
+
 import '../../../../../core/networking/api_constants.dart';
 import '../../../../../core/networking/api_handler.dart';
-import '../../../../../core/theming/theme.dart'; // عشان ColorsManager
+import '../../../../../core/networking/error_handler.dart';
+import '../../../../../core/theming/theme.dart';
 import 'scan_model.dart';
 import 'scan_state.dart';
 
@@ -17,82 +19,87 @@ class ScanCubit extends Cubit<ScanState> {
   CameraController? _controller;
   final ImagePicker _picker = ImagePicker();
 
+  // Getter أساسي للـ UI
+  CameraController? get getCameraController => _controller;
+
   Future<void> initCamera() async {
-    if (_controller != null) await _controller!.dispose();
+    // لو الكنترولر شغال وموجود مش لازم نعمل init من الأول
+    if (_controller != null && _controller!.value.isInitialized) return;
+
     emit(ScanLoading());
     try {
-      final cameras = await availableCameras();
-      if (cameras.isEmpty) {
-        emit(ScanError("No cameras found"));
+      var status = await Permission.camera.status;
+      if (status.isPermanentlyDenied) {
+        emit(ScanError("Camera access is blocked. Enable it from settings."));
         return;
       }
+
+      if (!status.isGranted) {
+        status = await Permission.camera.request();
+        if (!status.isGranted) {
+          emit(ScanError("Camera permission is required."));
+          return;
+        }
+      }
+
+      final cameras = await availableCameras();
+      if (cameras.isEmpty) {
+        emit(ScanError("No cameras found."));
+        return;
+      }
+
       _controller = CameraController(cameras.first, ResolutionPreset.high, enableAudio: false);
       await _controller!.initialize();
+
       if (!isClosed) emit(CameraReady(_controller!));
     } catch (e) {
-      emit(ScanError("Camera initialization failed"));
+      emit(ScanError("Failed to initialize camera."));
     }
   }
 
-  // ميثود القص (الجديدة)
-  Future<String?> _cropImage(String path) async {
-    try {
-      CroppedFile? croppedFile = await ImageCropper().cropImage(
-        sourcePath: path,
-        uiSettings: [
-          AndroidUiSettings(
-            toolbarTitle: 'Set Landmark',
-            toolbarColor: Colors.black,
-            toolbarWidgetColor: ColorsManager.rafeeqYellow,
-            activeControlsWidgetColor: ColorsManager.rafeeqYellow,
-            initAspectRatio: CropAspectRatioPreset.original,
-            lockAspectRatio: false,
-          ),
-          IOSUiSettings(title: 'Adjust Photo'),
-        ],
-      );
-      return croppedFile?.path;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  // التقاط صورة بالكاميرا + القص
   Future<void> captureImage() async {
     if (_controller == null || !_controller!.value.isInitialized) return;
     try {
-      final image = await _controller!.takePicture();
-      // فتح واجهة القص
+      final XFile image = await _controller!.takePicture();
       final String? croppedPath = await _cropImage(image.path);
-
-      // لو اليوزر قص الصورة فعلاً ارفعها
-      if (croppedPath != null) {
-        await _uploadImage(croppedPath);
-      }
+      if (croppedPath != null) await uploadImage(croppedPath);
     } catch (e) {
-      emit(ScanError("Capture failed"));
+      emit(ScanError("Failed to capture image."));
     }
   }
 
-  // اختيار صورة من المعرض + القص
   Future<void> pickImage() async {
     try {
       final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
-        // فتح واجهة القص
         final String? croppedPath = await _cropImage(pickedFile.path);
-
-        if (croppedPath != null) {
-          await _uploadImage(croppedPath);
-        }
+        if (croppedPath != null) await uploadImage(croppedPath);
       }
     } catch (e) {
-      emit(ScanError("Pick image failed"));
+      emit(ScanError("Failed to pick image."));
     }
   }
 
-  // رفع الصورة للسيرفر (هي هي بس بتستلم المسار المقصوص)
-  Future<void> _uploadImage(String path) async {
+  Future<String?> _cropImage(String path) async {
+    try {
+      final croppedFile = await ImageCropper().cropImage(
+        sourcePath: path,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Identify Landmark',
+            toolbarColor: Colors.black,
+            toolbarWidgetColor: ColorsManager.rafeeqYellow,
+            activeControlsWidgetColor: ColorsManager.rafeeqYellow,
+          ),
+        ],
+      );
+      return croppedFile?.path;
+    } catch (e) {
+      return path;
+    }
+  }
+
+  Future<void> uploadImage(String path) async {
     emit(ScanLoading());
     try {
       final dio = await ApiHandler.getDio();
@@ -101,28 +108,28 @@ class ScanCubit extends Cubit<ScanState> {
       });
 
       final response = await dio.post(ApiConstants.uploadImage, data: formData);
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final resultModel = ScanModel.fromJson(response.data);
-        emit(ScanSuccess(path, resultModel));
-      } else {
-        emit(ScanError("Server returned ${response.statusCode}"));
-      }
-    } on DioException catch (e) {
-      emit(ScanError("Connection failed. Check your internet."));
+      final resultModel = ScanModel.fromJson(response.data);
+      emit(ScanSuccess(path, resultModel));
     } catch (e) {
-      emit(ScanError("An unexpected error occurred"));
+      // هنا بنبعت الايرور بس الكنترولر بيفضل موجود في الـ memory
+      final String errorMessage = ErrorHandler.handle(e);
+      emit(ScanError(errorMessage));
+    }
+  }
+
+  Future<void> disposeCamera() async {
+    if (_controller != null) {
+      await _controller!.dispose();
+      _controller = null;
     }
   }
 
   @override
   Future<void> close() async {
-    await _controller?.dispose();
-    super.close();
+    await disposeCamera();
+    return super.close();
   }
 }
-
-
 
 
 
