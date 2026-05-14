@@ -25,7 +25,7 @@
 ---
 
 ## 👨‍💻 Developed By
-**Your Name**  
+**Mohamed Ahmed Mohamed Rashedy**  
 *Computer Science Student at Helwan University*
 - [LinkedIn](https://www.linkedin.com/in/mohamedrashedy021)
 - [GitHub](https://github.com/rashedy2003)
