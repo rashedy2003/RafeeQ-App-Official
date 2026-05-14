@@ -1,16 +1,34 @@
-# rafeeq
+# RafeeQ – AI-Powered Tourism Platform 🇪🇬 ✨
 
-A new Flutter project.
+**RafeeQ** is a premium mobile application built with **Flutter** designed to revolutionize the tourism experience in Egypt. Using **Artificial Intelligence**, the app identifies landmarks and provides a seamless guide through Egypt's governorates.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 🚀 Key Features
+- **AI Landmark Identification:** Identify Egyptian monuments and landmarks via camera.
+- **Governorate Explorer:** Detailed guides and information about all Egyptian governorates.
+- **Interactive Maps:** Discover tourist spots with integrated **Google Maps**.
+- **Modern UI/UX:** A high-end dark theme with gold accents, following **Premium Design** standards.
+- **Secure Authentication:** User management and real-time data powered by **Firebase**.
 
-A few resources to get you started if this is your first Flutter project:
+---
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 🛠️ Tech Stack & Architecture
+- **Framework:** [Flutter](https://flutter.dev/)
+- **State Management:** **Cubit (Bloc)** - for scalable and organized business logic.
+- **Backend:** Firebase (Auth, Firestore, Storage).
+- **API Integration:** REST APIs for dynamic tourism data.
+- **Architecture:** Clean Architecture (Data, Domain, Presentation layers).
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+> **Note:** For security reasons, the `networking` layer and `google-services.json` have been excluded from this public repository.
+
+---
+
+## 👨‍💻 Developed By
+**Your Name**  
+*Computer Science Student at Helwan University*
+- [LinkedIn](https://www.linkedin.com/in/mohamedrashedy021)
+- [GitHub](https://github.com/rashedy2003)
+
+---
+*This project was developed as a Graduation Project to showcase the beauty of Egypt through technology.*
